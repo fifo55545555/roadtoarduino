@@ -1,12 +1,18 @@
 // 27cm/s rýchlosť robota
 // zistiť dialku aku dojazdi po vypnuti motora (cm)
 // musime spraviť aby sa otáčal okolo stredu kryžovatky
-int tas=0;
 
 float block = 30; //cm
 int ir = 650; //0 - 1000
-bool button = false;
 int delAfterKrizovatkaTurn = 500;
+int turnIRCD = 250; // (turn infrared cooldown) cooldown in ms that says how long to wait before measuring ir after started to turn
+bool button = false; // if should start started
+
+// no touch pls
+int tas=0;
+bool slepaUlicka = false;
+bool lastTurnLeft = true;
+bool fwCounter = 0; // how many times it went foward after last turn
 
 void setup() {
 
@@ -50,26 +56,52 @@ void loop() {
    }
 
    if(button){
-      if(tas >= 3){
+      if(tas >= 3 && !slepaUlicka){
          vpred(296); // vzdialenosť senzora od stredu motora (8cm) / rychlost robota
          //vpred(0); // ked dojazdi + vpred(int del) tak aby stred robota bol v strede krizovatky
-         if(ultraZvuk(3)<block){
-            turn(true, 250);
+         if(ultrazvuk(3)<block){
+            turn(true, turnIRCD);
             stop(); delay(delAfterKrizovatkaTurn);
 
-            if(ultraZvuk(3)<block){
-               turn(false, 250);
+            if(ultrazvuk(3)<block){
+               turn(false, turnIRCD);
                stop(); delay(delAfterKrizovatkaTurn);
-               turn(false, 250);
+               turn(false, turnIRCD);
                stop(); delay(delAfterKrizovatkaTurn);
 
-               if(ultraZvuk(3)<block){
-                  turn(false, 250);
+               if(ultrazvuk(3)<block){
+                  turn(false, turnIRCD);
                   vpred(-1);
                   stop(); delay(delAfterKrizovatkaTurn);
-               }else{vpred(-1);}
-            }else{vpred(-1);}
-         }else{vpred(-1);}
+                  slepaUlicka = true;
+
+               }else{vpred(-1); slepaUlicka = false; lastTurnLeft = false; fwCounter = 0;}
+            }else{vpred(-1); slepaUlicka = false; lastTurnLeft = true; fwCounter = 0;}
+         }else{vpred(-1); slepaUlicka = false; fwCounter++;}
+
+
+      }else if(tas >= 3 && slepaUlicka){
+         vpred(296); // vzdialenosť senzora od stredu motora (8cm) / rychlost robota
+
+         turn(true, turnIRCD);
+         stop(); delay(delAfterKrizovatkaTurn);
+
+         if(ultrazvuk(3)>block && (fwCounter != 0 || lastTurnLeft == true)){
+            vpred(-1); fwCounter = 0; slepaUlicka = false;
+         }else{
+            turn(false, turnIRCD);
+            stop(); delay(delAfterKrizovatkaTurn);
+            turn(false, turnIRCD);
+            stop(); delay(delAfterKrizovatkaTurn);
+
+            if(ultrazvuk(3)>block && (fwCounter != 0 || lastTurnLeft == false)){
+               vpred(-1); fwCounter = 0; slepaUlicka = false;
+            }else{
+               turn(true, turnIRCD);
+               stop(); delay(delAfterKrizovatkaTurn);
+               vpred(-1); fwCounter--;
+            }
+         }
 
 
       }else if(analogRead(A0) < ir){
