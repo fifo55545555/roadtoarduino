@@ -5,6 +5,8 @@
 float block = 32; //cm
 int ir = 650; //0 - 1000
 int delAfterKrizovatkaTurn = 250;
+int turnCorrection = 100;
+int fireAfterDetection = 160; // after detection how long spin motor to land in the center of the intersection
 int turnIRCD = 250; // (turn infrared cooldown) cooldown in ms that says how long to wait before measuring ir after started to turn
 bool button = false; // if should start started
 bool leftTurnFirst = true;
@@ -13,7 +15,7 @@ bool leftTurnFirst = true;
 int tas=0;
 bool slepaUlicka = false;
 bool lastTurnLeft = true;
-bool fwCounter = 0; // how many times it went foward after last turn
+int fwCounter = 0; // how many times it went foward after last turn
 
 
 void setup() {
@@ -60,13 +62,13 @@ void loop() {
 
    if(button){
       if(tas >= 3 && !slepaUlicka){
-         vpred(160);// vzdialenosť senzora od stredu motora (8cm) / rychlost robota (160)
+         vpred(fireAfterDetection);// vzdialenosť senzora od stredu motora (8cm) / rychlost robota (160)
          delay(500);
          if(ultraZvuk(3)<block){//1l
             turn(leftTurnFirst,turnIRCD);
             stop();
             turn(!leftTurnFirst,-1);
-            delay(100);
+            delay(turnCorrection);
             stop();
 
             delay(delAfterKrizovatkaTurn);
@@ -75,7 +77,7 @@ void loop() {
               turn(!leftTurnFirst,turnIRCD);
               stop();
               turn(leftTurnFirst,-1);
-              delay(100);
+              delay(turnCorrection);
               stop();
 
               delay(delAfterKrizovatkaTurn);
@@ -83,7 +85,7 @@ void loop() {
               turn(!leftTurnFirst,turnIRCD);
               stop();
               turn(leftTurnFirst,-1);
-              delay(100);
+              delay(turnCorrection);
               stop();
 
               delay(delAfterKrizovatkaTurn);
@@ -92,7 +94,7 @@ void loop() {
                 turn(!leftTurnFirst,turnIRCD);
                 stop();
                 turn(leftTurnFirst,-1);
-                delay(100);
+                delay(turnCorrection);
                 stop();
 
                 delay(delAfterKrizovatkaTurn);
@@ -105,24 +107,24 @@ void loop() {
 
 
       }else if(tas >= 3 && slepaUlicka){
-         vpred(160); // vzdialenosť senzora od stredu motora (8cm) / rychlost robota
+         vpred(fireAfterDetection); // vzdialenosť senzora od stredu motora (8cm) / rychlost robota
 
          turn(leftTurnFirst,turnIRCD);
          stop();
          turn(!leftTurnFirst,-1);
-         delay(100);
+         delay(turnCorrection);
          stop();
 
          delay(delAfterKrizovatkaTurn);
 
-         if(ultrazvuk(3)>block && (fwCounter != 0 || lastTurnLeft == true)){
+         if(ultraZvuk(3)>block && (fwCounter != 0 || lastTurnLeft == true)){
             vpred(-1); fwCounter = 0; slepaUlicka = false;
          }else{
 
             turn(!leftTurnFirst,turnIRCD);
             stop();
             turn(leftTurnFirst,-1);
-            delay(100);
+            delay(turnCorrection);
             stop();
 
             delay(delAfterKrizovatkaTurn);
@@ -130,18 +132,18 @@ void loop() {
             turn(!leftTurnFirst,turnIRCD);
             stop();
             turn(leftTurnFirst,-1);
-            delay(100);
+            delay(turnCorrection);
             stop();
 
             delay(delAfterKrizovatkaTurn);
 
-            if(ultrazvuk(3)>block && (fwCounter != 0 || lastTurnLeft == false)){
+            if(ultraZvuk(3)>block && (fwCounter != 0 || lastTurnLeft == false)){
                vpred(-1); fwCounter = 0; slepaUlicka = false;
             }else{
                turn(leftTurnFirst,turnIRCD);
                stop();
                turn(!leftTurnFirst,-1);
-               delay(100);
+               delay(turnCorrection);
                stop();
                vpred(-1); fwCounter--;
             }
