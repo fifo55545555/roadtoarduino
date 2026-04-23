@@ -5,8 +5,12 @@ int tas=0;
 
 float block = 32; //cm
 int ir = 650; //0 - 1000
+int delAfterKrizovatkaTurn = 250;
+bool leftTurnFirst = true;
+int turnIRCD = 250; // (turn infrared cooldown) cooldown in ms that says how long to wait before measuring ir after started to turn
+
+//no touch pls
 bool button = false;
-int delAfterKrizovatkaTurn = 1000;
 
 void setup() {
 
@@ -55,38 +59,41 @@ void loop() {
          vpred(160);// vzdialenosť senzora od stredu motora (8cm) / rychlost robota (160)
          delay(500);
          if(ultraZvuk(3)<block){//1l
-            turn(true,250);
+            turn(leftTurnFirst,turnIRCD);
             stop();
-            turn(false,-1);
+            turn(!leftTurnFirst,-1);
             delay(100);
             stop();
 
+            delay(delAfterKrizovatkaTurn);
+
             if(ultraZvuk(3)<block){//2r
-              turn(false,250);
+              turn(!leftTurnFirst,turnIRCD);
               stop();
-              turn(true,-1);
+              turn(leftTurnFirst,-1);
               delay(100);
               stop();
 
-              delay(250);
+              delay(delAfterKrizovatkaTurn);
 
-              turn(false,250);
+              turn(!leftTurnFirst,turnIRCD);
               stop();
-              turn(true,-1);
+              turn(leftTurnFirst,-1);
               delay(100);
               stop();
 
-              delay(250);
+              delay(delAfterKrizovatkaTurn);
 
                if(ultraZvuk(3)<block){//1r
-                turn(false,250);
+                turn(!leftTurnFirst,turnIRCD);
                 stop();
-                turn(true,-1);
+                turn(leftTurnFirst,-1);
                 delay(100);
                 stop();
 
-                delay(250);
+                delay(delAfterKrizovatkaTurn);
                   vpred(-1);
+
                }else{vpred(-1);}
             }else{vpred(-1);}
          }else{vpred(-1);}
