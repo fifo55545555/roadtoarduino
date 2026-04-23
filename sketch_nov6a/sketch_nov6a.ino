@@ -85,11 +85,11 @@ void loop() {
                 delay(100);
                 stop();
 
-              delay(250);
-                  button = false;
-               }else{button = false;}
-            }else{button = false;}
-         }else{button = false;}
+                delay(250);
+                  vpred(-1);
+               }else{vpred(-1);}
+            }else{vpred(-1);}
+         }else{vpred(-1);}
 
 
       }else if(analogRead(A0) < ir || analogRead(A1) < ir){
