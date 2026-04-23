@@ -3,10 +3,10 @@
 // musime spraviť aby sa otáčal okolo stredu kryžovatky
 int tas=0;
 
-float block = 30; //cm
+float block = 32; //cm
 int ir = 650; //0 - 1000
 bool button = false;
-int delAfterKrizovatkaTurn = 500;
+int delAfterKrizovatkaTurn = 1000;
 
 void setup() {
 
@@ -47,34 +47,54 @@ void loop() {
    if(digitalRead(30) == true){
       button = !button;
       delay(250);
+      if(button){vpred(-1);}
    }
 
    if(button){
       if(tas >= 3){
-         vpred(296); // vzdialenosť senzora od stredu motora (8cm) / rychlost robota
-         //vpred(0); // ked dojazdi + vpred(int del) tak aby stred robota bol v strede krizovatky
-         if(ultraZvuk(3)<block){
-            turn(true, 250);
-            stop(); delay(delAfterKrizovatkaTurn);
+         vpred(160);// vzdialenosť senzora od stredu motora (8cm) / rychlost robota (160)
+         delay(500);
+         if(ultraZvuk(3)<block){//1l
+            turn(true,250);
+            stop();
+            turn(false,-1);
+            delay(100);
+            stop();
 
-            if(ultraZvuk(3)<block){
-               turn(false, 250);
-               stop(); delay(delAfterKrizovatkaTurn);
-               turn(false, 250);
-               stop(); delay(delAfterKrizovatkaTurn);
+            if(ultraZvuk(3)<block){//2r
+              turn(false,250);
+              stop();
+              turn(true,-1);
+              delay(100);
+              stop();
 
-               if(ultraZvuk(3)<block){
-                  turn(false, 250);
-                  vpred(-1);
-                  stop(); delay(delAfterKrizovatkaTurn);
-               }else{vpred(-1);}
-            }else{vpred(-1);}
-         }else{vpred(-1);}
+              delay(250);
+
+              turn(false,250);
+              stop();
+              turn(true,-1);
+              delay(100);
+              stop();
+
+              delay(250);
+
+               if(ultraZvuk(3)<block){//1r
+                turn(false,250);
+                stop();
+                turn(true,-1);
+                delay(100);
+                stop();
+
+              delay(250);
+                  button = false;
+               }else{button = false;}
+            }else{button = false;}
+         }else{button = false;}
 
 
-      }else if(analogRead(A0) < ir){
+      }else if(analogRead(A0) < ir || analogRead(A1) < ir){
          turn(true, 0);
-      }else if(analogRead(A4) < ir){
+      }else if(analogRead(A4) < ir || analogRead(A3) < ir){
          turn(false, 0);
       }else if(analogRead(A2) < ir){
          vpred(-1);
@@ -126,17 +146,17 @@ int turn(bool left, int del){
    if(left){
       digitalWrite(5, LOW);  // dozadu
       digitalWrite(6, HIGH);  // dopredu
-      analogWrite(7, 5);   // rzchlosť
+      analogWrite(7, 250);   // rzchlosť
 
-      analogWrite(2, 0);  // rzchlosť
+      analogWrite(2, 250);  // rzchlosť
       digitalWrite(3, LOW);  // dopredu
       digitalWrite(4, HIGH);   // dozadu
    }else{
       digitalWrite(5, HIGH);  // dozadu
       digitalWrite(6, LOW);  // dopredu
-      analogWrite(7, 5);   // rzchlosť
+      analogWrite(7, 250);   // rzchlosť
 
-      analogWrite(2, 0);  // rzchlosť
+      analogWrite(2, 250);  // rzchlosť
       digitalWrite(3, HIGH);  // dopredu
       digitalWrite(4, LOW);   // dozadu
    }
@@ -185,4 +205,3 @@ float ultraZvuk(int repeat){
 //   while(true){
 //      if(analogRead(A2) < 650){break;}
 //   }}
-
