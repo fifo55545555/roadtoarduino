@@ -5,7 +5,7 @@
 float block = 32; //cm
 int ir = 650; //0 - 1000
 int delAfterKrizovatkaTurn = 250;
-int turnCorrection = 130;
+int turnCorrection = 135;
 int fireAfterDetection = 100; // after detection how long spin motor to land in the center of the intersection
 int turnIRCD = 250; // (turn infrared cooldown) cooldown in ms that says how long to wait before measuring ir after started to turn
 bool button = false; // if should start started
