@@ -40,6 +40,11 @@ void setup() {
  pinMode(8, OUTPUT);
  pinMode(9, INPUT);
 
+ // ledky
+ pinMode(10, OUTPUT);
+ pinMode(11, OUTPUT);
+ pinMode(12, OUTPUT);
+
  Serial.begin(9600);
 
 }
@@ -267,6 +272,22 @@ float ultraZvuk(int repeat){
    return 100;
   }
   return distance;
+}
+
+void oznam(int led, bool on){ //10, 11, 12
+
+   if(on){
+      digitalWrite(led, HIGH);
+   }else{
+      digitalWrite(led, LOW);
+   }
+
+   if(led == 11){
+      delay(100);
+      digitalWrite(led, LOW);
+   }
+
+   Serial.print("oznam : "); Serial.print(led); Serial.print(" "); Serial.println(on);
 }
 
 //void right(){
