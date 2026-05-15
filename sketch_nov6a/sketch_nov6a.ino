@@ -67,12 +67,17 @@ void loop() {
 
    if(button){
       if(tas >= 3 && !slepaUlicka){
+         oznam(10, true); oznam(12, true);
+
          vpred(fireAfterDetection);// vzdialenosť senzora od stredu motora (8cm) / rychlost robota (160)
          delay(500);
+
+         oznam(11, true);
          if(ultraZvuk(3)<block){//1l
             kTurn(leftTurnFirst, turnIRCD, turnCorrection, ir);
             delay(delAfterKrizovatkaTurn);
 
+            oznam(11, true);
             if(ultraZvuk(3)<block){//2r
               kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
               delay(delAfterKrizovatkaTurn);
@@ -80,6 +85,7 @@ void loop() {
               kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
               delay(delAfterKrizovatkaTurn);
 
+               oznam(11, true);
                if(ultraZvuk(3)<block){//1r
                 kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
                 delay(delAfterKrizovatkaTurn);
@@ -93,12 +99,14 @@ void loop() {
 
 
       }else if(tas >= 3 && slepaUlicka){
+         oznam(10, true);
          vpred(fireAfterDetection); // vzdialenosť senzora od stredu motora (8cm) / rychlost robota
          delay(500);
 
          kTurn(leftTurnFirst, turnIRCD, turnCorrection, ir);
          delay(delAfterKrizovatkaTurn);
 
+         oznam(11, true);
          if(ultraZvuk(3)>block && (fwCounter != 0 || lastTurnLeft == true)){
             vpred(-1); fwCounter = 0; slepaUlicka = false;
          }else{
@@ -109,6 +117,7 @@ void loop() {
             kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
             delay(delAfterKrizovatkaTurn);
 
+            oznam(11, true);
             if(ultraZvuk(3)>block && (fwCounter != 0 || lastTurnLeft == false)){
                vpred(-1); fwCounter = 0; slepaUlicka = false;
             }else{
@@ -119,11 +128,11 @@ void loop() {
          }
 
       }else if(analogRead(A0) < ir || analogRead(A1) < ir){
-         turn(true, 0);
+         turn(true, 0); oznam(12, false);
       }else if(analogRead(A4) < ir || analogRead(A3) < ir){
-         turn(false, 0);
+         turn(false, 0); oznam(12, false);
       }else if(analogRead(A2) < ir){
-         vpred(-1);
+         vpred(-1); oznam(12, false);
          }
    }else{
       stop();
