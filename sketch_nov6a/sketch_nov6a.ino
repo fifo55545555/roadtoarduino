@@ -6,7 +6,7 @@ float block = 32; //cm
 int ir = 650; //0 - 1000
 int delAfterKrizovatkaTurn = 250;
 int turnCorrection = 135;
-int fireAfterDetection = 90; // after detection how long spin motor to land in the center of the intersection
+int fireAfterDetection = 75; // after detection how long spin motor to land in the center of the intersection
 int turnIRCD = 250; // (turn infrared cooldown) cooldown in ms that says how long to wait before measuring ir after started to turn
 bool button = false; // if should start started
 bool leftTurnFirst = true;
@@ -63,22 +63,23 @@ void loop() {
       button = !button;
       delay(250);
       if(button){vpred(-1);}
+      
+      slepaUlicka = false;
+      fwCounter = 0;
    }
 
 
    if(button){
       if(tas >= 3 && !slepaUlicka){
-         //oznam(10, true); oznam(12, false);
+         oznam(10, true); oznam(12, false);
 
          vpred(fireAfterDetection);// vzdialenosť senzora od stredu motora (8cm) / rychlost robota (160)
          delay(500);
 
-         //oznam(11, true);
          if(ultraZvuk(3)<block){//1l
             kTurn(leftTurnFirst, turnIRCD, turnCorrection, ir);
             delay(delAfterKrizovatkaTurn);
 
-            //oznam(11, true);
             if(ultraZvuk(3)<block){//2r
               kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
               delay(delAfterKrizovatkaTurn);
@@ -86,7 +87,6 @@ void loop() {
               kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
               delay(delAfterKrizovatkaTurn);
 
-               //oznam(11, true);
                if(ultraZvuk(3)<block){//1r
                 kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
                 delay(delAfterKrizovatkaTurn);
@@ -107,7 +107,6 @@ void loop() {
          kTurn(leftTurnFirst, turnIRCD, turnCorrection, ir);
          delay(delAfterKrizovatkaTurn);
 
-         //oznam(11, true);
          if(ultraZvuk(3)>block && (fwCounter != 0 || lastTurnLeft == true)){
             vpred(-1); fwCounter = 0; slepaUlicka = false;
          }else{
@@ -118,7 +117,6 @@ void loop() {
             kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
             delay(delAfterKrizovatkaTurn);
 
-            //oznam(11, true);
             if(ultraZvuk(3)>block && (fwCounter != 0 || lastTurnLeft == false)){
                vpred(-1); fwCounter = 0; slepaUlicka = false;
             }else{
