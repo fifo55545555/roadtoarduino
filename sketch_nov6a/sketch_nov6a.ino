@@ -12,10 +12,11 @@ bool button = false; // if should start started
 bool leftTurnFirst = true;
 
 // no touch pls
-int tas=0;
+byte tas=0;
 bool slepaUlicka = false;
-bool lastTurnLeft = true;
-int fwCounter = 0; // how many times it went foward after last turn
+bool lastTurnLeft = true; // soon obsolete
+byte fwCounter = 0; // how many times it went foward after last turn
+array turnHystory[] = {"start"};// can be "start", "left", "right", "back"
 
 
 void setup() {
