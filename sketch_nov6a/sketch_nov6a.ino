@@ -10,14 +10,16 @@ int fireAfterDetection = 75; // after detection how long spin motor to land in t
 int turnIRCD = 250; // (turn infrared cooldown) cooldown in ms that says how long to wait before measuring ir after started to turn
 bool button = false; // if should start started
 bool leftTurnFirst = true;
+byte turnHystorySize = 32;
 
 // no touch pls
 byte tas=0;
 bool slepaUlicka = false;
-bool lastTurnLeft = true; // soon obsolete
-byte fwCounter = 0; // how many times it went foward after last turn
-array turnHystory[] = {"start"};// can be "start", "left", "right", "back"
+char turnHystory[turnHystorySize]; // can be 'f' (foward), 's' (start  ), 'l' (left), 'r' (right), 'b' (back). start is used as a placeholder for when thurn hystory is not yet filled out.
 
+// chopping block, no touch pls
+byte fwCounter = 0; // how many times it went foward after last turn (soon obsolete)
+bool lastTurnLeft = true; // soon obsolete
 
 void setup() {
 
@@ -48,6 +50,8 @@ void setup() {
 
  Serial.begin(9600);
 
+ fillArray(turnHystory, turnHystorySize ,'s');
+
 }
 
 void loop() {
@@ -63,8 +67,8 @@ void loop() {
    if(digitalRead(30) == true){
       button = !button;
       delay(250);
-      if(button){vpred(-1);}
-      
+      if(button){vpred(-1);}else{fillArray(turnHystory, turnHystorySize ,'s');}
+
       slepaUlicka = false;
       fwCounter = 0;
    }
@@ -92,12 +96,11 @@ void loop() {
                 kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
                 delay(delAfterKrizovatkaTurn);
 
-                vpred(-1);
-                slepaUlicka = true;
+                vpred(-1); slepaUlicka = true; shiftAndAppendArray(turnHystory, turnHystorySize ,'b');
 
-               }else{vpred(-1); slepaUlicka = false; lastTurnLeft = false; fwCounter = 0;}
-            }else{vpred(-1); slepaUlicka = false; lastTurnLeft = true; fwCounter = 0;}
-         }else{vpred(-1); slepaUlicka = false; fwCounter++;}
+               }else{vpred(-1); slepaUlicka = false; lastTurnLeft = false; fwCounter = 0; shiftAndAppendArray(turnHystory, turnHystorySize ,'r');}
+            }else{vpred(-1); slepaUlicka = false; lastTurnLeft = true; fwCounter = 0; shiftAndAppendArray(turnHystory, turnHystorySize ,'r');}
+         }else{vpred(-1); slepaUlicka = false; fwCounter++; shiftAndAppendArray(turnHystory, turnHystorySize ,'f');}
 
 
       }else if(tas >= 3 && slepaUlicka){
@@ -140,7 +143,7 @@ void loop() {
 
       }
   //if(digitalRead(30)){vpred(3000);}
-
+   for(byte i = 0; i<turnHystorySize;i++){Serial.println(turnHystory[i])}
 
 }
 
@@ -302,6 +305,18 @@ void oznam(int led, bool on){ //10, 11, 12
    Serial.print("oznam : "); Serial.print(led); Serial.print(" "); Serial.println(on);
 }
 
+void fillArray(char inputArray[],inputArrayLength, char desiredFill){
+   for (byte i = 0; i < inputArrayLength; i++){
+      inputArray[i] = desiredFill;
+   }
+}
+
+void shiftAndAppendArray(char inputArray[], inputArrayLength, char desiredAppend){
+   for(byte i = 0; i <inputArrayLength-1; i++){
+      inputArray[i] = inputArray[i+1];
+   }
+   inputArray[inputArrayLength-1] = desiredAppend;
+}
 //void right(){
 //   digitalWrite(5, HIGH);  // dozadu
 //   digitalWrite(6, LOW);  // dopredu
