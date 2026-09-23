@@ -15,8 +15,7 @@ byte turnHystorySize = 32;
 // no touch pls
 byte tas=0;
 bool slepaUlicka = false;
-char turnHystory[turnHystorySize]; // can be 'f' (foward), 's' (start  ), 'l' (left), 'r' (right), 'b' (back). start is used as a placeholder for when thurn hystory is not yet filled out.
-
+bool firstLoop = false;
 // chopping block, no touch pls
 byte fwCounter = 0; // how many times it went foward after last turn (soon obsolete)
 bool lastTurnLeft = true; // soon obsolete
@@ -43,18 +42,23 @@ void setup() {
  pinMode(8, OUTPUT);
  pinMode(9, INPUT);
 
- // ledky
+ // leds
  pinMode(10, OUTPUT);
  pinMode(11, OUTPUT);
  pinMode(12, OUTPUT);
 
  Serial.begin(9600);
 
- fillArray(turnHystory, turnHystorySize ,'s');
-
 }
 
 void loop() {
+
+   char turnHystory[turnHystorySize]; // can be 'f' (foward), 's' (start  ), 'l' (left), 'r' (right), 'b' (back). start is used as a placeholder for when thurn hystory is not yet filled out.
+
+   if(firstLoop){
+      fillArray(turnHystory, turnHystorySize ,'s');
+   }
+
 
    tas=0;
 
@@ -140,11 +144,10 @@ void loop() {
    }else{
       stop();
       oznam(10,false);  oznam(11,false);  oznam(12,false);
+   }
 
-      }
-  //if(digitalRead(30)){vpred(3000);}
-   for(byte i = 0; i<turnHystorySize;i++){Serial.println(turnHystory[i])}
-
+   for(byte i = 0; i<turnHystorySize;i++){Serial.println(turnHystory[i]);}
+   firstLoop = false;
 }
 
 int vpred(int del){
@@ -305,13 +308,13 @@ void oznam(int led, bool on){ //10, 11, 12
    Serial.print("oznam : "); Serial.print(led); Serial.print(" "); Serial.println(on);
 }
 
-void fillArray(char inputArray[],inputArrayLength, char desiredFill){
+void fillArray(char inputArray[],int inputArrayLength, char desiredFill){
    for (byte i = 0; i < inputArrayLength; i++){
       inputArray[i] = desiredFill;
    }
 }
 
-void shiftAndAppendArray(char inputArray[], inputArrayLength, char desiredAppend){
+void shiftAndAppendArray(char inputArray[], int inputArrayLength, char desiredAppend){
    for(byte i = 0; i <inputArrayLength-1; i++){
       inputArray[i] = inputArray[i+1];
    }
