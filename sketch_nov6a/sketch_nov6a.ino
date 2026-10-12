@@ -17,6 +17,16 @@ bool slepaUlicka = false;
 bool lastTurnLeft = true;
 int fwCounter = 0; // how many times it went foward after last turn
 
+enum RobotStates{
+    buttonAwait,
+    followLine,
+    enterIntersection,
+    turnLeft1x,
+    turnRight2x,
+    turnBack
+  };
+
+int robotstate = RobotStates::buttonAwait;
 
 void setup() {
 
@@ -63,31 +73,41 @@ void loop() {
       button = !button;
       delay(250);
       if(button){vpred(-1);}
-      
+
       slepaUlicka = false;
       fwCounter = 0;
    }
 
 
+
+   if(robotstate != buttonAwait){
+      if(tas >= 3 && robotstate == followLine){
+        robotstate = enterIntersection
+      }
+  }
+
+
+
+
    if(button){
       if(tas >= 3 && !slepaUlicka){
-         oznam(10, true); oznam(12, false);
+         oznam(10, true); oznam(12, false);//enterIntersection
 
          vpred(fireAfterDetection);// vzdialenosť senzora od stredu motora (8cm) / rychlost robota (160)
          delay(500);
 
-         if(ultraZvuk(3)<block){//1l
+         if(ultraZvuk(3)<block){//1l , turnLeft1x
             kTurn(leftTurnFirst, turnIRCD, turnCorrection, ir);
             delay(delAfterKrizovatkaTurn);
 
-            if(ultraZvuk(3)<block){//2r
+            if(ultraZvuk(3)<block){//2r, turnRight2x
               kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
               delay(delAfterKrizovatkaTurn);
 
               kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
               delay(delAfterKrizovatkaTurn);
 
-               if(ultraZvuk(3)<block){//1r
+               if(ultraZvuk(3)<block){//1r, turnBack
                 kTurn(!leftTurnFirst, turnIRCD, turnCorrection, ir);
                 delay(delAfterKrizovatkaTurn);
 
