@@ -1,0 +1,54 @@
+states : buttonAwait, enterIntersection
+
+
+loop(){
+
+    ir.update(); // nastavi ir.LO ir.LI ir.MM ir.RI ir.RO
+
+    Button.update(); // button.state bude asi radsej
+
+    switch (state):
+        case buttonAwait:
+
+            if button.state{
+                state = followLine;
+                foward(speed, -1);
+            }else{
+                button.state = false;
+                stop();}
+            break;
+
+        case followLine:
+            if TAS =< 3 {
+                state = enterIntersection;
+                break;
+                }
+            Fturn(speed, ir.getStateNum())
+
+        case enterIntersection:
+            foward(speed, V&DtoT(speed, distace)); //speed and distace to time
+            delay(250) // time it takes to stop
+            if
+            break;
+    }
+            if ir.LO && ir.LI {
+                Fturn(speed, -3);
+            }else if(ir.LI && ir.MM){
+                Fturn(speed, -1);
+            }else if(ir.MM && ir.RI){
+                Fturn(speed, 1);
+            }else if(ir.RI && ir.RO){
+                Fturn(speed, 3);
+
+            }else if(ir.LO){
+                Fturn(speed, -4);
+            }else if(ir.LI){
+                Fturn(speed, -2);
+            }else if(ir.MM){
+                Fturn(speed, 0);
+            }else if(ir.RI){
+                Fturn(speed, 2);
+            }else if(ir.RO){
+                Fturn(speed, 4);
+            }
+            break;
